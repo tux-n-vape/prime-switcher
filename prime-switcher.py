@@ -18,7 +18,7 @@ if __name__ == '__main__':
     current_driver_file = utils.get_config_filepath('current-driver')
 
     with open(current_driver_file, 'r') as f:
-        default_driver = f.readline()
+        default_driver = f.readline().rstrip('\n')
 
     switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher()}
 
@@ -34,9 +34,10 @@ if __name__ == '__main__':
     if args.gui:
         gui.open_gui()
     elif args.query:
-        gpu = 'Performances' if swr.get_dedicated_gpu_state() else 'Power Saving'
-        print('Current Mode : ', gpu)
-        print('GPU : ', swr.get_current_gpu_name())
+        gpu = 'Performance' if swr.get_dedicated_gpu_state() else 'Power Saving'
+        print('Targeted Driver :', default_driver)
+        print('Current Mode :', gpu)
+        print('GPU :', swr.get_current_gpu_name())
     else:
         if args.uninstall:
             print('Uninstalling...')
