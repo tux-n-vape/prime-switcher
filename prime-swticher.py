@@ -8,7 +8,7 @@ import os
 default_driver = 'free'
 
 
-def run_as_root(func, args, kwargs):
+def run_as_root(func, *args, **kwargs):
     if os.getuid() == 0:
         func(*args, **kwargs)
     else:
