@@ -17,7 +17,7 @@ def run_as_root(func, *args, **kwargs):
 if __name__ == '__main__':
     current_driver_file = utils.get_config_filepath('current-driver')
 
-    with open(current_driver_file) as f:
+    with open(current_driver_file, 'r') as f:
         default_driver = f.read()
 
     switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher()}
@@ -39,6 +39,9 @@ if __name__ == '__main__':
         elif args.set is not None:
             if args.driver != default_driver:
                 run_as_root(switchers_dict[default_driver].uninstall)
+                with open(current_driver_file, 'w') as f:
+                    f.write(args.driver)
+
             run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
         else:
             parser.print_help()
