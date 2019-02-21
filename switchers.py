@@ -27,7 +27,7 @@ class Switcher(ABC):
     def get_dedicated_gpu_state(self) -> bool:
         pass
 
-    def get_current_gpu_name() -> str:
+    def get_current_gpu_name(self) -> str:
         glxinfo = utils.execute_command('glxinfo')
         result = re.search(r'.*OpenGL renderer string:\s*([^\n\r]*)', glxinfo)
         if result:
@@ -102,7 +102,7 @@ class OpenSourceDriverSwitcher(Switcher):
             utils.create_symlink(utils.get_config_filepath('open/gpuoff-module.conf'), module_file)
             self.remove_display_manager_hooks()
 
-    def remove_display_manager_hooks():
+    def remove_display_manager_hooks(self):
         # GDM
         utils.remove(gdm_file)
         # LightDM
