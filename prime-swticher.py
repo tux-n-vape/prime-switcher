@@ -7,6 +7,14 @@ import os
 
 default_driver = 'free'
 
+
+def run_as_root(func, *args, **kwargs):
+    if os.getuid() == 0:
+        func(args, kwargs)
+    else:
+        print('Root is required')
+
+
 if __name__ == '__main__':
     switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher()}
 
@@ -20,14 +28,11 @@ if __name__ == '__main__':
     if args.gui:
         gui.open_gui()
     else:
-        # If user is root
-        if os.getuid() == 1:
-            swr = switchers_dict[args.driver]
+        swr = switchers_dict[args.driver]
 
-            if args.uninstall:
-                swr.uninstall()
-            elif args.set is not None:
-                swr.set_dedicated_gpu_state(args.set == 'performance')
+        if args.uninstall:
+            run_as_root(swr.uninstall)
+        elif args.set is not None:
+            run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
         else:
-            print('root is required')
-
+            parser.print_help()
