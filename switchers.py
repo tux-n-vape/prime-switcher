@@ -8,6 +8,10 @@ modprobe_file = '/etc/modprobe.d/prime-switcher.conf'
 module_file = '/etc/modules-load.d/prime-switcher.conf'
 xorg_file = '/etc/X11/xorg.conf.d/90-prime-switcher.conf'
 profile_file = '/etc/profile.d/prime-switcher.sh'
+gdm_file = '/etc/gdm/PreSession/prime-switcher'
+lightdm_file = '/etc/lightdm/lightdm.conf'
+sddm_file = '/usr/share/sddm/scripts/Xsetup'
+display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
 
 
 class Switcher(ABC):
@@ -23,7 +27,7 @@ class Switcher(ABC):
     def get_dedicated_gpu_state(self) -> bool:
         pass
 
-    def get_current_gpu_name(self) -> str:
+    def get_current_gpu_name() -> str:
         glxinfo = utils.execute_command('glxinfo')
         result = re.search(r'.*OpenGL renderer string:\s*([^\n\r]*)', glxinfo)
         if result:
@@ -31,9 +35,11 @@ class Switcher(ABC):
         else:
             return 'Unknown GPU'
 
-    @abstractmethod
-    def get_reboot_required(self) -> bool:
-        pass
+    def uninstall(self):
+        utils.remove(profile_file)
+        utils.remove(xorg_file)
+        utils.remove(module_file)
+        utils.remove(modprobe_file)
 
 
 class NvidiaSwitcher(Switcher):
@@ -52,14 +58,11 @@ class NvidiaSwitcher(Switcher):
         if state:
             utils.create_symlink(utils.get_config_filepath('nvidia/profile.sh'), profile_file)
         else:
-            os.remove('/etc/profile.d/prime-switcher.sh')
+            utils.remove(profile_file)
 
     def get_dedicated_gpu_state(self) -> bool:
         lsmod = utils.execute_command('lsmod')
         return 'nvidia' in lsmod
-
-    def get_reboot_required(self) -> bool:
-        return True
 
 
 class OpenSourceDriverSwitcher(Switcher):
@@ -78,19 +81,10 @@ class OpenSourceDriverSwitcher(Switcher):
         return 'unknown.png'
 
     def set_dedicated_gpu_state(self, state: bool):
-        gdm_file = '/etc/gdm/PreSession/prime-switcher'
-        lightdm_file = '/etc/lightdm/lightdm.conf'
-        sddm_file = '/usr/share/sddm/scripts/Xsetup'
-
-        display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
-
         if state:
             utils.create_symlink(utils.get_config_filepath('open/profile.sh'), profile_file)
-            try:
-                os.remove(modprobe_file)
-                os.remove(module_file)
-            except FileNotFoundError:
-                pass
+            utils.remove(modprobe_file)
+            utils.remove(module_file)
 
             # GDM
             if os.path.exists('/etc/gdm/PreSession/'):
@@ -103,25 +97,25 @@ class OpenSourceDriverSwitcher(Switcher):
             if os.path.exists(sddm_file) and not utils.file_contains(sddm_file, display_manager_hook):
                 utils.write_line_in_file(sddm_file, sddm_file)
         else:
-            try:
-                os.remove(profile_file)
-            except FileNotFoundError:
-                pass
+            utils.remove(profile_file)
             utils.create_symlink(utils.get_config_filepath('open/gpuoff-modprobe.conf'), modprobe_file)
             utils.create_symlink(utils.get_config_filepath('open/gpuoff-module.conf'), module_file)
-            try:
-                os.remove(gdm_file)
-                if os.path.exists(lightdm_file):
-                    utils.replace_in_file(lightdm_file, 'display-setup-script=' + display_manager_hook,
-                                          '#display-setup-script=')
-                if os.path.exists(sddm_file):
-                    utils.remove_line_in_file(sddm_file, display_manager_hook)
+            self.remove_display_manager_hooks()
 
-            except FileNotFoundError:
-                pass
+    def remove_display_manager_hooks():
+        # GDM
+        utils.remove(gdm_file)
+        # LightDM
+        if os.path.exists(lightdm_file):
+            utils.replace_in_file(lightdm_file, 'display-setup-script=' + display_manager_hook,
+                                  '#display-setup-script=')
+        # SDDM
+        if os.path.exists(sddm_file):
+            utils.remove_line_in_file(sddm_file, display_manager_hook)
 
     def get_dedicated_gpu_state(self) -> bool:
         return os.getenv('DRI_PRIME', 0) == 1
 
-    def get_reboot_required(self) -> bool:
-        return False
+    def uninstall(self):
+        super().uninstall()
+        self.remove_display_manager_hooks()

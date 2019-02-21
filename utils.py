@@ -49,3 +49,10 @@ def remove_line_in_file(file: str, line: str):
         if ln != line:
             f.write(ln)
     f.close()
+
+
+def remove(file: str):
+    try:
+        os.remove(file)
+    except FileNotFoundError:
+        pass
