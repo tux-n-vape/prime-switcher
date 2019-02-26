@@ -51,6 +51,6 @@ if __name__ == '__main__':
                     f.write(args.driver)
             print('Configuring...')
             run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
-            print('Done.')
+            print('Done. Reboot required to apply changes.')
         else:
             parser.print_help()
