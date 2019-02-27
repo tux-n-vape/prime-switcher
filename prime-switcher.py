@@ -7,7 +7,7 @@ import os
 import utils
 
 
-def run_as_root(func, *args, **kwargs):
+def run_as_root(func, *args, **kwargs) -> None:
     if os.getuid() == 0:
         func(*args, **kwargs)
     else:
@@ -20,7 +20,8 @@ if __name__ == '__main__':
     with open(current_driver_file, 'r') as f:
         default_driver = f.readline().rstrip('\n')
 
-    switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher()}
+    switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher(),
+                      'nvidia-reverse-prime': switchers.NvidiaReversePrime()}
 
     parser = argparse.ArgumentParser(prog='prime-switcher')
     parser.add_argument('--set', '-s', type=str, choices=['power-saving', 'performance'])

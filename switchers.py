@@ -20,7 +20,7 @@ class Switcher(ABC):
         pass
 
     @abstractmethod
-    def set_dedicated_gpu_state(self, state: bool):
+    def set_dedicated_gpu_state(self, state: bool) -> None:
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class Switcher(ABC):
         else:
             return 'Unknown GPU'
 
-    def uninstall(self):
+    def uninstall(self) -> None:
         utils.remove(profile_file)
         utils.remove(xorg_file)
         utils.remove(module_file)
@@ -43,16 +43,19 @@ class Switcher(ABC):
 
 
 class NvidiaSwitcher(Switcher):
+    def __init__(self) -> None:
+        self.__dir_name__ = 'nvidia/'
+
     def get_icon(self) -> str:
         return 'nvidia.png' if self.get_dedicated_gpu_state() else 'intel.png'
 
     def set_dedicated_gpu_state(self, state: bool):
         gpu = 'nvidia' if state else 'intel'
-        utils.create_symlink(utils.get_config_filepath('nvidia/' + gpu + '-modprobe.conf'),
+        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-modprobe.conf'),
                              modprobe_file)
-        utils.create_symlink(utils.get_config_filepath('nvidia/' + gpu + '-modules.conf'),
+        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-modules.conf'),
                              module_file)
-        utils.create_symlink(utils.get_config_filepath('nvidia/' + gpu + '-xorg.conf'),
+        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-xorg.conf'),
                              xorg_file)
 
         if state:
@@ -63,6 +66,12 @@ class NvidiaSwitcher(Switcher):
     def get_dedicated_gpu_state(self) -> bool:
         lsmod = utils.execute_command('lsmod')
         return 'nvidia' in lsmod
+
+
+class NvidiaReversePrime(NvidiaSwitcher):
+    def __init__(self) -> None:
+        super().__init__()
+        self.__dir_name__ = 'nvidia-reverse-prime/'
 
 
 class OpenSourceDriverSwitcher(Switcher):
@@ -80,7 +89,7 @@ class OpenSourceDriverSwitcher(Switcher):
                 return 'intel.png'
         return 'unknown.png'
 
-    def set_dedicated_gpu_state(self, state: bool):
+    def set_dedicated_gpu_state(self, state: bool) -> None:
         if state:
             utils.create_symlink(utils.get_config_filepath('open/profile.sh'), profile_file)
             utils.remove(modprobe_file)
@@ -102,7 +111,7 @@ class OpenSourceDriverSwitcher(Switcher):
             utils.create_symlink(utils.get_config_filepath('open/gpuoff-module.conf'), module_file)
             self.remove_display_manager_hooks()
 
-    def remove_display_manager_hooks(self):
+    def remove_display_manager_hooks(self) -> None:
         # GDM
         utils.remove(gdm_file)
         # LightDM
@@ -116,6 +125,6 @@ class OpenSourceDriverSwitcher(Switcher):
     def get_dedicated_gpu_state(self) -> bool:
         return os.getenv('DRI_PRIME', 0) == 1
 
-    def uninstall(self):
+    def uninstall(self) -> None:
         super().uninstall()
         self.remove_display_manager_hooks()

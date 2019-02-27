@@ -10,7 +10,7 @@ def get_config_filepath(file: str) -> str:
     return os.path.join('/etc/prime-switcher/', file)
 
 
-def replace_in_file(file: str, text: str, replace: str):
+def replace_in_file(file: str, text: str, replace: str) -> None:
     f = open(file, 'r')
     file_data = f.read()
     f.close()
@@ -22,7 +22,7 @@ def replace_in_file(file: str, text: str, replace: str):
     f.close()
 
 
-def create_symlink(source: str, dest: str):
+def create_symlink(source: str, dest: str) -> None:
     if os.path.exists(dest):
         os.remove(dest)
     os.symlink(source, dest)
@@ -34,12 +34,12 @@ def file_contains(file: str, text: str) -> bool:
         return text in data
 
 
-def write_line_in_file(file: str, line: str):
+def write_line_in_file(file: str, line: str) -> None:
     with open(file, 'a') as f:
         f.write(line)
 
 
-def remove_line_in_file(file: str, line: str):
+def remove_line_in_file(file: str, line: str) -> None:
     f = open(file, 'r')
     lines = f.readlines()
     f.close()
@@ -51,7 +51,7 @@ def remove_line_in_file(file: str, line: str):
     f.close()
 
 
-def remove(file: str):
+def remove(file: str) -> None:
     try:
         os.remove(file)
     except FileNotFoundError:
