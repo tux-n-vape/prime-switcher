@@ -92,7 +92,7 @@ class OpenSourceDriverSwitcher(Switcher):
     def set_dedicated_gpu_state(self, state: bool) -> None:
         if state:
             utils.create_symlink(utils.get_config_filepath('open/profile.sh'), profile_file)
-            utils.remove(modprobe_file)
+            utils.create_symlink(utils.get_config_filepath('open/gpuon-modprobe.conf'), modprobe_file)
             utils.remove(module_file)
 
             # GDM
