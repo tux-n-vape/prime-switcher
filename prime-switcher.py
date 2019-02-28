@@ -33,7 +33,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     swr = switchers_dict[args.driver]
     if args.gui:
-        gui.open_gui()
+        gui.open_gui(swr)
     elif args.query:
         gpu = 'Performance' if swr.get_dedicated_gpu_state() else 'Power Saving'
         print('Targeted Driver :', default_driver)
