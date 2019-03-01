@@ -21,7 +21,8 @@ if __name__ == '__main__':
         default_driver = f.readline().rstrip('\n')
 
     switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher(),
-                      'nvidia-reverse-prime': switchers.NvidiaReversePrime()}
+                      'nvidia-reverse-prime': switchers.NvidiaReversePrime(), 'nouveau': switchers.NouveauSwitcher(),
+                      'nouveau-reverse-prime': switchers.NouveauReversePrimeSwitcher()}
 
     parser = argparse.ArgumentParser(prog='prime-switcher')
     parser.add_argument('--set', '-s', type=str, choices=['power-saving', 'performance'])
