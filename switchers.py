@@ -15,6 +15,10 @@ display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
 
 
 class Switcher(ABC):
+    def __init__(self, dirname: str) -> None:
+        super().__init__()
+        self.__dirname__ = dirname
+
     @abstractmethod
     def get_icon(self) -> str:
         pass
@@ -26,6 +30,9 @@ class Switcher(ABC):
     @abstractmethod
     def get_dedicated_gpu_state(self) -> bool:
         pass
+
+    def get_config_file(self, file) -> str:
+        return os.path.join(utils.get_config_filepath(self.__dirname__), file)
 
     def get_current_gpu_name(self) -> str:
         glxinfo = utils.execute_command('glxinfo')
@@ -44,22 +51,22 @@ class Switcher(ABC):
 
 class NvidiaSwitcher(Switcher):
     def __init__(self) -> None:
-        self.__dir_name__ = 'nvidia/'
+        super().__init__('nvidia')
 
     def get_icon(self) -> str:
         return 'nvidia.png' if self.get_dedicated_gpu_state() else 'intel.png'
 
     def set_dedicated_gpu_state(self, state: bool):
         gpu = 'nvidia' if state else 'intel'
-        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-modprobe.conf'),
+        utils.create_symlink(self.get_config_file(gpu + '-modprobe.conf'),
                              modprobe_file)
-        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-modules.conf'),
+        utils.create_symlink(self.get_config_file(gpu + '-modules.conf'),
                              module_file)
-        utils.create_symlink(utils.get_config_filepath(self.__dir_name__ + gpu + '-xorg.conf'),
+        utils.create_symlink(self.get_config_file(gpu + '-xorg.conf'),
                              xorg_file)
 
         if state:
-            utils.create_symlink(utils.get_config_filepath('nvidia/profile.sh'), profile_file)
+            utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
         else:
             utils.remove(profile_file)
 
@@ -71,10 +78,13 @@ class NvidiaSwitcher(Switcher):
 class NvidiaReversePrime(NvidiaSwitcher):
     def __init__(self) -> None:
         super().__init__()
-        self.__dir_name__ = 'nvidia-reverse-prime/'
+        self.__dir_name__ = 'nvidia-reverse-prime'
 
 
 class OpenSourceDriverSwitcher(Switcher):
+    def __init__(self) -> None:
+        super().__init__('open')
+
     def get_icon(self) -> str:
         provider_id = os.getenv('DRI_PRIME', 0)
         provider_list = utils.execute_command('xrandr --listproviders')
@@ -91,9 +101,7 @@ class OpenSourceDriverSwitcher(Switcher):
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
         if state:
-            utils.create_symlink(utils.get_config_filepath('open/profile.sh'), profile_file)
-            utils.create_symlink(utils.get_config_filepath('open/gpuon-modprobe.conf'), modprobe_file)
-            utils.remove(module_file)
+            utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
 
             # GDM
             if os.path.exists('/etc/gdm/PreSession/'):
@@ -107,8 +115,6 @@ class OpenSourceDriverSwitcher(Switcher):
                 utils.write_line_in_file(sddm_file, sddm_file)
         else:
             utils.remove(profile_file)
-            utils.create_symlink(utils.get_config_filepath('open/gpuoff-modprobe.conf'), modprobe_file)
-            utils.create_symlink(utils.get_config_filepath('open/gpuoff-module.conf'), module_file)
             self.remove_display_manager_hooks()
 
     def remove_display_manager_hooks(self) -> None:
@@ -128,3 +134,24 @@ class OpenSourceDriverSwitcher(Switcher):
     def uninstall(self) -> None:
         super().uninstall()
         self.remove_display_manager_hooks()
+
+
+class NouveauSwitcher(OpenSourceDriverSwitcher):
+    def __init__(self, reverse_prime: bool) -> None:
+        super().__init__()
+        self.__dirname__ = 'nouveau'
+        self.__reverse_prime__ = reverse_prime
+
+    def set_dedicated_gpu_state(self, state: bool) -> None:
+        super().set_dedicated_gpu_state(state)
+        gpu = 'nouveau' if state else 'intel'
+        utils.create_symlink(self.get_config_file(gpu + '-modprobe.conf'),
+                             modprobe_file)
+        utils.create_symlink(self.get_config_file(gpu + '-modules.conf'),
+                             module_file)
+
+
+class NouveauReversePrimeSwitcher(NvidiaSwitcher):
+    def __init__(self) -> None:
+        super().__init__()
+        self.__dirname__ = 'nouveau-reverse-prime'
