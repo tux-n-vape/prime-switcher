@@ -151,7 +151,19 @@ class NouveauSwitcher(OpenSourceDriverSwitcher):
                              module_file)
 
 
-class NouveauReversePrimeSwitcher(NvidiaSwitcher):
+class NouveauReversePrimeSwitcher(Switcher):
     def __init__(self) -> None:
-        super().__init__()
-        self.__dirname__ = 'nouveau-reverse-prime'
+        super().__init__('nouveau-reverse-prime')
+
+    def get_icon(self) -> str:
+        return 'nvidia.png' if self.get_dedicated_gpu_state() else 'intel.png'
+
+    def set_dedicated_gpu_state(self, state: bool) -> None:
+        if state:
+            utils.create_symlink(self.get_config_file('nouveau-xorg.conf'), xorg_file)
+        else:
+            utils.remove(xorg_file)
+
+    def get_dedicated_gpu_state(self) -> bool:
+        return os.path.exists(xorg_file) and os.path.islink(xorg_file) and os.readlink(
+            xorg_file) == self.get_config_file('nouveau-xorg.conf')
