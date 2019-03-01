@@ -137,10 +137,9 @@ class OpenSourceDriverSwitcher(Switcher):
 
 
 class NouveauSwitcher(OpenSourceDriverSwitcher):
-    def __init__(self, reverse_prime: bool) -> None:
+    def __init__(self) -> None:
         super().__init__()
         self.__dirname__ = 'nouveau'
-        self.__reverse_prime__ = reverse_prime
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
         super().set_dedicated_gpu_state(state)
