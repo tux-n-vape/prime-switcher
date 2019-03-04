@@ -1,5 +1,6 @@
 import subprocess
 import os
+import re
 
 
 def execute_command(cmd) -> str:
@@ -8,6 +9,18 @@ def execute_command(cmd) -> str:
 
 def get_config_filepath(file: str) -> str:
     return os.path.join('/etc/prime-switcher/', file)
+
+
+def get_gpu_brand_list() -> list:
+    data = execute_command('lspci').lower()
+    reg = re.compile(r'(vga|display|hdmi|3d)')
+    list = []
+    for device in data.split('\n'):
+        if reg.search(device):
+            result = re.search(r'.*:\s*([^ ]*)', device)
+            if result:
+                list.append(result.group(1))
+    return list
 
 
 def replace_in_file(file: str, text: str, replace: str) -> None:

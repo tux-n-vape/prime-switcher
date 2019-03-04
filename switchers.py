@@ -12,7 +12,7 @@ gdm_file = '/etc/gdm/PreSession/prime-switcher'
 lightdm_file = '/etc/lightdm/lightdm.conf'
 sddm_file = '/usr/share/sddm/scripts/Xsetup'
 display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
-
+modes = ['power-saving', 'performance']
 
 class Switcher(ABC):
     def __init__(self, dirname: str) -> None:
@@ -87,17 +87,11 @@ class OpenSourceDriverSwitcher(Switcher):
 
     def get_icon(self) -> str:
         provider_id = os.getenv('DRI_PRIME', 0)
-        provider_list = utils.execute_command('xrandr --listproviders')
-        result = re.search(r'.*Provider ' + provider_id + r':\s*(.*name:*([^\n\r]*))', provider_list)
-        if result:
-            driver_name = result.group(2)
-            if driver_name in ['amdgpu', 'radeon']:
-                return 'amd_on.png' if provider_id else 'amd_off.png'
-            elif driver_name == 'nouveau':
-                return 'nvidia.png'
-            elif driver_name == 'intel':
-                return 'intel.png'
-        return 'unknown.png'
+        gpu_brand = utils.get_gpu_brand_list()[provider_id]
+        if gpu_brand == 'amd':
+            return 'amd_on.png' if provider_id else 'amd_off.png'
+        else:
+            return gpu_brand + '.png'
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
         if state:

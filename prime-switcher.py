@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 import argparse
 import switchers
@@ -25,7 +25,7 @@ if __name__ == '__main__':
                       'nouveau-reverse-prime': switchers.NouveauReversePrimeSwitcher()}
 
     parser = argparse.ArgumentParser(prog='prime-switcher')
-    parser.add_argument('--set', '-s', type=str, choices=['power-saving', 'performance'])
+    parser.add_argument('--set', '-s', type=str, choices=switchers.modes)
     parser.add_argument('--driver', '-d', type=str, choices=switchers_dict.keys(), default=default_driver)
     parser.add_argument('--uninstall', '-u', action='store_true')
     parser.add_argument('--gui', action='store_true')
