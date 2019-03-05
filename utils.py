@@ -7,8 +7,12 @@ def execute_command(cmd) -> str:
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout.read().decode()
 
 
+def get_debug_folder(path: str) -> str:
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+
+
 def get_config_filepath(file: str) -> str:
-    return os.path.join('/etc/prime-switcher/', file)
+    return os.path.join(get_debug_folder('configs') if os.getenv('DEBUG', 0) else '/etc/prime-switcher/', file)
 
 
 def get_gpu_brand_list() -> list:

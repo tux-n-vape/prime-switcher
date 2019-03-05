@@ -1,5 +1,7 @@
 import gi
 
+import utils
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -13,7 +15,6 @@ import gettext
 import os
 
 APPINDICATOR_ID = 'prime-switcher'
-ICON_FOLDER_PATH = '/usr/share/prime-switcher/'
 
 
 def reboot(widget, *data):
@@ -30,22 +31,29 @@ def display_notification(widget, *data):
 def open_gui(switcher: switchers.Switcher):
     gettext.textdomain(APPINDICATOR_ID)
 
+    modes_names = ['Power Saving', 'Performance']
+
+    # Notifications Declaration BEGIN
     Notify.init("Prime Switcher")
+
     success_notify = Notify.Notification.new("Reboot required", "Reboot is required to apply modifications")
     success_notify.add_action('reboot', 'Reboot now', reboot, None, None)
 
     error_notify = Notify.Notification.new("Error", "An error as occurred.", "error")
 
+    # Notifications Declaration END
+
+    # Menu BEGIN
     menu = Gtk.Menu()
 
-    item = Gtk.MenuItem('Switch to ')
+    item = Gtk.MenuItem('Switch to {}'.format(modes_names[int(not switcher.get_dedicated_gpu_state())]))
     item.connect('activate', display_notification, success_notify, error_notify,
                  switchers.modes[int(not switcher.get_dedicated_gpu_state())])
     menu.append(item)
 
     menu.append(Gtk.SeparatorMenuItem())
 
-    current_mode = Gtk.MenuItem('Current Mode : ')
+    current_mode = Gtk.MenuItem('Current Mode : {}'.format(modes_names[int(switcher.get_dedicated_gpu_state())]))
     current_mode.set_sensitive(False)
     menu.append(current_mode)
 
@@ -53,7 +61,10 @@ def open_gui(switcher: switchers.Switcher):
     gpu_name.set_sensitive(False)
     menu.append(gpu_name)
 
-    indicator = appindicator.Indicator.new(APPINDICATOR_ID, ICON_FOLDER_PATH + switcher.get_icon(),
+    # Menu END
+
+    indicator = appindicator.Indicator.new(APPINDICATOR_ID, os.path.join(
+        utils.get_debug_folder('icons') if os.getenv('DEBUG', 0) else '/usr/share/prime-switch/', switcher.get_icon()),
                                            appindicator.IndicatorCategory.SYSTEM_SERVICES)
     indicator.set_menu(menu)
     indicator.set_status(appindicator.IndicatorStatus.ACTIVE)

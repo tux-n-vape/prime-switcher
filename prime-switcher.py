@@ -18,7 +18,7 @@ if __name__ == '__main__':
     current_driver_file = utils.get_config_filepath('current-driver')
 
     with open(current_driver_file, 'r') as f:
-        default_driver = f.readline().rstrip('\n')
+        config_driver = f.readline().rstrip('\n')
 
     switchers_dict = {'free': switchers.OpenSourceDriverSwitcher(), 'nvidia': switchers.NvidiaSwitcher(),
                       'nvidia-reverse-prime': switchers.NvidiaReversePrime(), 'nouveau': switchers.NouveauSwitcher(),
@@ -26,18 +26,18 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(prog='prime-switcher')
     parser.add_argument('--set', '-s', type=str, choices=switchers.modes)
-    parser.add_argument('--driver', '-d', type=str, choices=switchers_dict.keys(), default=default_driver)
+    parser.add_argument('--driver', '-d', type=str, choices=switchers_dict.keys(), default=config_driver)
     parser.add_argument('--uninstall', '-u', action='store_true')
     parser.add_argument('--gui', action='store_true')
     parser.add_argument('--query', '-q', action='store_true')
-
     args = parser.parse_args()
+
     swr = switchers_dict[args.driver]
     if args.gui:
         gui.open_gui(swr)
     elif args.query:
         gpu = 'Performance' if swr.get_dedicated_gpu_state() else 'Power Saving'
-        print('Targeted Driver :', default_driver)
+        print('Targeted Driver :', config_driver)
         print('Current Mode :', gpu)
         print('GPU :', swr.get_current_gpu_name())
     else:
@@ -46,9 +46,9 @@ if __name__ == '__main__':
             run_as_root(swr.uninstall)
             print('Done.')
         elif args.set is not None:
-            if args.driver != default_driver:
+            if args.driver != config_driver:
                 print('Uninstalling config for previous driver...')
-                run_as_root(switchers_dict[default_driver].uninstall)
+                run_as_root(switchers_dict[config_driver].uninstall)
                 with open(current_driver_file, 'w') as f:
                     f.write(args.driver)
             print('Configuring...')
