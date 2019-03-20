@@ -14,6 +14,7 @@ sddm_file = '/usr/share/sddm/scripts/Xsetup'
 display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
 modes = ['power-saving', 'performance']
 
+
 class Switcher(ABC):
     def __init__(self, dirname: str) -> None:
         super().__init__()
@@ -87,7 +88,7 @@ class OpenSourceDriverSwitcher(Switcher):
 
     def get_icon(self) -> str:
         provider_id = os.getenv('DRI_PRIME', 0)
-        gpu_brand = utils.get_gpu_brand_list()[provider_id]
+        gpu_brand = utils.get_gpu_list()[provider_id].get_brand()
         if gpu_brand == 'amd':
             return 'amd_on.png' if provider_id else 'amd_off.png'
         else:

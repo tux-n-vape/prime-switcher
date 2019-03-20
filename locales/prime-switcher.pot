@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-03-18 14:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: gui.py:33
+msgid "Performance"
+msgstr ""
+
+#: gui.py:33
+msgid "Power Saving"
+msgstr ""
+
+#: gui.py:40
+msgid "Reboot is required to apply modifications"
+msgstr ""
+
+#: gui.py:40
+msgid "Reboot required"
+msgstr ""
+
+#: gui.py:41
+msgid "Reboot now"
+msgstr ""
+
+#: gui.py:43
+msgid "An error as occurred."
+msgstr ""
+
+#: gui.py:43
+msgid "Error"
+msgstr ""
+
+#: gui.py:50
+msgid "Switch to {} mode"
+msgstr ""
+
+#: gui.py:57
+msgid "Current Mode : {}"
+msgstr ""
+

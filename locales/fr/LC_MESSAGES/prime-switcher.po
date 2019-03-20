@@ -1,0 +1,52 @@
+# Prime Switcher Translations
+# Copyright (C) 2019 Tux'n'Vape
+# Adrien Jussak <adrien.jussak@wascaredev.com>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: prime-switcher\n"
+"POT-Creation-Date: 2019-03-18 14:04+0100\n"
+"PO-Revision-Date: 2019-03-18 14:07+0100\n"
+"Last-Translator: Adrien Jussak <adrien.jussak@wascaredev.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: gui.py:33
+msgid "Performance"
+msgstr "Performance"
+
+#: gui.py:33
+msgid "Power Saving"
+msgstr "Économie d'énergie"
+
+#: gui.py:40
+msgid "Reboot is required to apply modifications"
+msgstr "Un redémarrage est requis pour appliquer les modifications"
+
+#: gui.py:40
+msgid "Reboot required"
+msgstr "Redémarrage requis"
+
+#: gui.py:41
+msgid "Reboot now"
+msgstr "Redémarrer maintenant"
+
+#: gui.py:43
+msgid "An error as occurred."
+msgstr "Une erreur est survenue."
+
+#: gui.py:43
+msgid "Error"
+msgstr "Erreur"
+
+#: gui.py:50
+msgid "Switch to {} mode"
+msgstr "Passer en mode {}"
+
+#: gui.py:57
+msgid "Current Mode : {}"
+msgstr "Mode actuel : {}"
+

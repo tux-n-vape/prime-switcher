@@ -5,6 +5,20 @@ import switchers
 import gui
 import os
 import utils
+import gettext
+
+
+def detect_driver() -> str:
+    gpu_list = utils.get_gpu_list()
+    print(gpu_list)
+    driver = 'free'
+    if gpu_list[0].get_brand() == 'intel' and gpu_list[1].get_brand() == 'nvidia':
+        non_free_driver = os.path.exists('/usr/bin/nvidia-modprobe')
+        driver = 'nvidia' if non_free_driver else 'nouveau'
+        if gpu_list[1].has_screen():
+            driver += '-reverse-prime'
+    print('Target driver detected : {}'.format(driver))
+    return driver
 
 
 def run_as_root(func, *args, **kwargs) -> None:
@@ -16,6 +30,9 @@ def run_as_root(func, *args, **kwargs) -> None:
 
 if __name__ == '__main__':
     current_driver_file = utils.get_config_filepath('current-driver')
+
+    localedir = utils.get_debug_folder('locales') if os.getenv('DEBUG', 0) else None
+    gettext.install('prime-switcher', localedir=localedir)
 
     with open(current_driver_file, 'r') as f:
         config_driver = f.readline().rstrip('\n')
@@ -30,6 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('--uninstall', '-u', action='store_true')
     parser.add_argument('--gui', action='store_true')
     parser.add_argument('--query', '-q', action='store_true')
+    parser.add_argument('--detect', '-D', action='store_true')
     args = parser.parse_args()
 
     swr = switchers_dict[args.driver]
@@ -40,19 +58,22 @@ if __name__ == '__main__':
         print('Targeted Driver :', config_driver)
         print('Current Mode :', gpu)
         print('GPU :', swr.get_current_gpu_name())
+    elif args.uninstall:
+        print('Uninstalling...')
+        run_as_root(swr.uninstall)
+        print('Done.')
+    elif args.set is not None:
+        if args.detect:
+            args.driver = detect_driver()
+        if args.driver != config_driver:
+            print('Uninstalling config for previous driver...')
+            run_as_root(switchers_dict[config_driver].uninstall)
+            with open(current_driver_file, 'w') as f:
+                f.write(args.driver)
+        print('Configuring...')
+        run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
+        print('Done. Reboot required to apply changes.')
+    elif args.detect:
+        detect_driver()
     else:
-        if args.uninstall:
-            print('Uninstalling...')
-            run_as_root(swr.uninstall)
-            print('Done.')
-        elif args.set is not None:
-            if args.driver != config_driver:
-                print('Uninstalling config for previous driver...')
-                run_as_root(switchers_dict[config_driver].uninstall)
-                with open(current_driver_file, 'w') as f:
-                    f.write(args.driver)
-            print('Configuring...')
-            run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
-            print('Done. Reboot required to apply changes.')
-        else:
-            parser.print_help()
+        parser.print_help()

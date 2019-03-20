@@ -22,38 +22,36 @@ def reboot(widget, *data):
 
 
 def display_notification(widget, *data):
-    if os.system('pkexec /usr/bin/prime-switcher -s {}'.format(data[2])) == 0:
-        data[0].show()
-    else:
-        data[1].show()
+    success = os.system('pkexec /usr/bin/prime-switcher -s {}'.format(data[2])) == 0
+    data[int(not success)].show()
 
 
 def open_gui(switcher: switchers.Switcher):
-    gettext.textdomain(APPINDICATOR_ID)
+    modes_names = [_('Power Saving'), _('Performance')]
 
-    modes_names = ['Power Saving', 'Performance']
+
 
     # Notifications Declaration BEGIN
     Notify.init("Prime Switcher")
 
-    success_notify = Notify.Notification.new("Reboot required", "Reboot is required to apply modifications")
-    success_notify.add_action('reboot', 'Reboot now', reboot, None, None)
+    success_notify = Notify.Notification.new(_("Reboot required"), _("Reboot is required to apply modifications"))
+    success_notify.add_action('reboot', _('Reboot now'), reboot, None, None)
 
-    error_notify = Notify.Notification.new("Error", "An error as occurred.", "error")
+    error_notify = Notify.Notification.new(_("Error"), _("An error as occurred."), "error")
 
     # Notifications Declaration END
 
     # Menu BEGIN
     menu = Gtk.Menu()
 
-    item = Gtk.MenuItem('Switch to {}'.format(modes_names[int(not switcher.get_dedicated_gpu_state())]))
+    item = Gtk.MenuItem(_('Switch to {} mode').format(modes_names[int(not switcher.get_dedicated_gpu_state())]))
     item.connect('activate', display_notification, success_notify, error_notify,
                  switchers.modes[int(not switcher.get_dedicated_gpu_state())])
     menu.append(item)
 
     menu.append(Gtk.SeparatorMenuItem())
 
-    current_mode = Gtk.MenuItem('Current Mode : {}'.format(modes_names[int(switcher.get_dedicated_gpu_state())]))
+    current_mode = Gtk.MenuItem(_('Current Mode : {}').format(modes_names[int(switcher.get_dedicated_gpu_state())]))
     current_mode.set_sensitive(False)
     menu.append(current_mode)
 
