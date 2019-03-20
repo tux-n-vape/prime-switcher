@@ -11,7 +11,6 @@ import switchers
 
 gi.require_version('Notify', '0.7')
 from gi.repository import Notify
-import gettext
 import os
 
 APPINDICATOR_ID = 'prime-switcher'
@@ -28,8 +27,6 @@ def display_notification(widget, *data):
 
 def open_gui(switcher: switchers.Switcher):
     modes_names = [_('Power Saving'), _('Performance')]
-
-
 
     # Notifications Declaration BEGIN
     Notify.init("Prime Switcher")

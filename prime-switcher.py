@@ -10,7 +10,6 @@ import gettext
 
 def detect_driver() -> str:
     gpu_list = utils.get_gpu_list()
-    print(gpu_list)
     driver = 'free'
     if gpu_list[0].get_brand() == 'intel' and gpu_list[1].get_brand() == 'nvidia':
         non_free_driver = os.path.exists('/usr/bin/nvidia-modprobe')

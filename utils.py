@@ -30,11 +30,6 @@ def get_gpu_list() -> List[gpu.GPU]:
     return list
 
 
-def get_recommended_driver() -> str:
-    get_gpu_list()
-    return 'free'
-
-
 def replace_in_file(file: str, text: str, replace: str) -> None:
     f = open(file, 'r')
     file_data = f.read()
