@@ -27,7 +27,8 @@ def get_gpu_list() -> List[gpu.GPU]:
             de = re.search(r'([^ ]*).*:\s*([^ ]*)', device)
             if de:
                 has_screen = re.search(r'(vga|display|hdmi)', device)
-                list.append(gpu.GPU(de.group(1), bool(has_screen), de.group(2)))
+                pci_id = de.group(1).replace('.', ':')
+                list.append(gpu.GPU(pci_id, bool(has_screen), de.group(2)))
     return list
 
 
