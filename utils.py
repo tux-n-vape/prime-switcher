@@ -3,6 +3,7 @@ import os
 import re
 import gpu
 from typing import List
+from typing import Dict
 
 
 def execute_command(cmd) -> str:
@@ -30,15 +31,16 @@ def get_gpu_list() -> List[gpu.GPU]:
     return list
 
 
-def replace_in_file(file: str, text: str, replace: str) -> None:
-    f = open(file, 'r')
+def replace_in_file(src: str, dst: str, correlations: Dict[str, str]) -> None:
+    f = open(src, 'r')
     file_data = f.read()
     f.close()
 
-    new_data = file_data.replace(text, replace)
+    for key in correlations:
+        file_data.replace(key, correlations[key])
 
-    f = open(file, 'w')
-    f.write(new_data)
+    f = open(dst, 'w')
+    f.write(file_data)
     f.close()
 
 

@@ -103,8 +103,8 @@ class OpenSourceDriverSwitcher(Switcher):
                 utils.create_symlink(display_manager_hook, gdm_file)
             # LightDM
             if os.path.exists(lightdm_file):
-                utils.replace_in_file(lightdm_file, '#display-setup-script=',
-                                      'display-setup-script=' + display_manager_hook)
+                utils.replace_in_file(lightdm_file, lightdm_file,
+                                      {'#display-setup-script=': ('display-setup-script=' + display_manager_hook)})
             # SDDM
             if os.path.exists(sddm_file) and not utils.file_contains(sddm_file, display_manager_hook):
                 utils.write_line_in_file(sddm_file, sddm_file)
@@ -117,8 +117,8 @@ class OpenSourceDriverSwitcher(Switcher):
         utils.remove(gdm_file)
         # LightDM
         if os.path.exists(lightdm_file):
-            utils.replace_in_file(lightdm_file, 'display-setup-script=' + display_manager_hook,
-                                  '#display-setup-script=')
+            utils.replace_in_file(lightdm_file, lightdm_file,
+                                  {('display-setup-script=' + display_manager_hook): '#display-setup-script='})
         # SDDM
         if os.path.exists(sddm_file):
             utils.remove_line_in_file(sddm_file, display_manager_hook)
