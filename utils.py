@@ -37,7 +37,11 @@ def replace_in_file(src: str, dst: str, correlations: Dict[str, str]) -> None:
     f.close()
 
     for key in correlations:
-        file_data.replace(key, correlations[key])
+        file_data = file_data.replace(key, correlations[key])
+
+    # May prevent some problems (like symlink)
+    if os.path.exists(dst):
+        os.remove(dst)
 
     f = open(dst, 'w')
     f.write(file_data)
