@@ -43,6 +43,11 @@ class Switcher(ABC):
         else:
             return 'Unknown GPU'
 
+    def patch_file_with_pci_id(self, src: str, dst: str):
+        gpu_list = utils.get_gpu_list()
+        utils.replace_in_file(src, dst, {"<embedded-gpu>": gpu_list[0].get_pci_id(),
+                                         "<dedicated-gpu>": gpu_list[1].get_pci_id()})
+
     def uninstall(self) -> None:
         utils.remove(profile_file)
         utils.remove(xorg_file)
@@ -63,8 +68,7 @@ class NvidiaSwitcher(Switcher):
                              modprobe_file)
         utils.create_symlink(self.get_config_file(gpu + '-modules.conf'),
                              module_file)
-        utils.create_symlink(self.get_config_file(gpu + '-xorg.conf'),
-                             xorg_file)
+        self.patch_file_with_pci_id(self.get_config_file(gpu + '-xorg.conf'), xorg_file)
 
         if state:
             utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
@@ -154,7 +158,7 @@ class NouveauReversePrimeSwitcher(Switcher):
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
         if state:
-            utils.create_symlink(self.get_config_file('nouveau-xorg.conf'), xorg_file)
+            self.patch_file_with_pci_id(self.get_config_file('nouveau-xorg.conf'), xorg_file)
         else:
             utils.remove(xorg_file)
 
