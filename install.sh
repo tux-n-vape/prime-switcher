@@ -1,5 +1,7 @@
 #!/bin/bash
 
+find locales -name \*.po -execdir msgfmt prime-switcher.po -o prime-switcher.mo
+
 mkdir -p /etc/prime-switcher/
 cp -r configs/* /etc/prime-switcher/
 mkdir -p /usr/lib/prime-switcher/

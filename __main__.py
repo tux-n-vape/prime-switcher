@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-import switchers
 import gui
-import os
 import utils
+import switchers
+import os
 import gettext
 
 
@@ -27,7 +27,7 @@ def run_as_root(func, *args, **kwargs) -> None:
         raise PermissionError('Root permissions are required.')
 
 
-if __name__ == '__main__':
+def main():
     current_driver_file = utils.get_config_filepath('current-driver')
 
     localedir = utils.get_debug_folder('locales') if os.getenv('DEBUG', 0) else None
@@ -76,3 +76,7 @@ if __name__ == '__main__':
         detect_driver()
     else:
         parser.print_help()
+
+
+if __name__ == '__main__':
+    main()

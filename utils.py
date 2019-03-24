@@ -11,7 +11,7 @@ def execute_command(cmd) -> str:
 
 
 def get_debug_folder(path: str) -> str:
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+    return os.path.join(os.path.dirname(os.getcwd()), path)
 
 
 def get_config_filepath(file: str) -> str:
