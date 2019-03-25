@@ -1,0 +1,7 @@
+[Desktop Entry]
+
+Name=Prime Switcher
+Type=Application
+Exec=prime-switcher --gui
+Icon=prime-switcher
+Terminal=false
