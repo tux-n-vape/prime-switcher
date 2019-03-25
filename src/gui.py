@@ -59,7 +59,7 @@ def open_gui(switcher: switchers.Switcher):
     # Menu END
 
     indicator = appindicator.Indicator.new(APPINDICATOR_ID, os.path.join(
-        utils.get_debug_folder('icons') if os.getenv('DEBUG', 0) else '/usr/share/prime-switcher/', switcher.get_icon()),
+        utils.get_debug_folder('assets') if os.getenv('DEBUG', 0) else '/usr/share/prime-switcher/', switcher.get_icon()),
                                            appindicator.IndicatorCategory.SYSTEM_SERVICES)
     indicator.set_menu(menu)
     indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
