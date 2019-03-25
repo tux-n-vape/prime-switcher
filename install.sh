@@ -7,5 +7,8 @@ cp -r configs/* /etc/prime-switcher/
 mkdir -p /usr/lib/prime-switcher/
 mkdir -p /usr/share/prime-switcher/
 cp icons/* /usr/share/prime-switcher/
-cp gui.py prime-switcher.py utils.py switchers.py /usr/lib/prime-switcher/
-ln -s /usr/lib/prime-switcher/prime-switcher.py /usr/bin/prime-switcher
+cp gpu.py gui.py __main__.py utils.py switchers.py /usr/lib/prime-switcher/
+ln -s /usr/lib/prime-switcher/__main__.py /usr/bin/prime-switcher
+
+cd locales
+find . -name '*.mo' -exec cp --parents \{\} ${pkgdir}/usr/share/locales/ \;
