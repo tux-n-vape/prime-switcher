@@ -15,4 +15,4 @@ cp prime-switcher.desktop /etc/xdg/autostart/
 ln -s /usr/lib/prime-switcher/__main__.py /usr/bin/prime-switcher
 
 cd locales
-find . -name '*.mo' -exec cp --parents \{\} ${pkgdir}/usr/share/locales/ \;
+find . -name '*.mo' -exec cp --parents \{\} /usr/share/locale/ \;
