@@ -64,6 +64,7 @@ def main():
     elif args.set is not None:
         if args.detect:
             args.driver = detect_driver()
+            swr = switchers_dict[args.driver]
         if args.driver != config_driver:
             print('Uninstalling config for previous driver...')
             run_as_root(switchers_dict[config_driver].uninstall)
