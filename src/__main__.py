@@ -9,6 +9,7 @@ import gettext
 
 
 def detect_driver() -> str:
+    """Detect the best driver installed on the system and return its name"""
     gpu_list = utils.get_gpu_list()
     driver = 'free'
     if gpu_list[0].get_brand() == 'intel' and gpu_list[1].get_brand() == 'nvidia':
@@ -21,6 +22,7 @@ def detect_driver() -> str:
 
 
 def run_as_root(func, *args, **kwargs) -> None:
+    """Check if user is root and execute given function else PermissionError"""
     if os.getuid() == 0:
         func(*args, **kwargs)
     else:
@@ -30,7 +32,7 @@ def run_as_root(func, *args, **kwargs) -> None:
 def main():
     current_driver_file = utils.get_config_filepath('current-driver')
 
-    localedir = utils.get_debug_folder('locales') if os.getenv('DEBUG', 0) else None
+    localedir = utils.get_debug_path('locales') if os.getenv('DEBUG', 0) else None
     gettext.install('prime-switcher', localedir=localedir)
 
     with open(current_driver_file, 'r') as f:

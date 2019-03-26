@@ -24,9 +24,9 @@ class Switcher(ABC):
     def get_icon(self) -> str:
         pass
 
-    @abstractmethod
     def set_dedicated_gpu_state(self, state: bool) -> None:
-        pass
+        # Manjaro specific fix
+        utils.remove("/etc/X11/xorg.conf.d/90-mhwd.conf")
 
     @abstractmethod
     def get_dedicated_gpu_state(self) -> bool:
@@ -63,6 +63,7 @@ class NvidiaSwitcher(Switcher):
         return 'nvidia.png' if self.get_dedicated_gpu_state() else 'intel.png'
 
     def set_dedicated_gpu_state(self, state: bool):
+        super().set_dedicated_gpu_state(state)
         gpu = 'nvidia' if state else 'intel'
         utils.create_symlink(self.get_config_file(gpu + '-modprobe.conf'),
                              modprobe_file)
@@ -99,6 +100,7 @@ class OpenSourceDriverSwitcher(Switcher):
             return gpu_brand + '.png'
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
+        super().set_dedicated_gpu_state(state)
         if state:
             utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
 
@@ -157,6 +159,7 @@ class NouveauReversePrimeSwitcher(Switcher):
         return 'nvidia.png' if self.get_dedicated_gpu_state() else 'intel.png'
 
     def set_dedicated_gpu_state(self, state: bool) -> None:
+        super().set_dedicated_gpu_state(state)
         if state:
             self.patch_file_with_pci_id(self.get_config_file('nouveau-xorg.conf'), xorg_file)
         else:

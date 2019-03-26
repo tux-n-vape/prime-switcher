@@ -7,18 +7,22 @@ from typing import Dict
 
 
 def execute_command(cmd) -> str:
+    """Execute command and return standard output after executing"""
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout.read().decode()
 
 
-def get_debug_folder(path: str) -> str:
+def get_debug_path(path: str) -> str:
+    """Concatenate debug folder path and given path"""
     return os.path.join(os.path.dirname(os.getcwd()), path)
 
 
 def get_config_filepath(file: str) -> str:
-    return os.path.join(get_debug_folder('configs') if os.getenv('DEBUG', 0) else '/etc/prime-switcher/', file)
+    """Concatenate config folder path and given path"""
+    return os.path.join(get_debug_path('configs') if os.getenv('DEBUG', 0) else '/etc/prime-switcher/', file)
 
 
 def get_gpu_list() -> List[gpu.GPU]:
+    """Get list of GPU detected by the system (lspci)"""
     data = execute_command('lspci').lower()
     reg = re.compile(r'(vga|display|hdmi|3d)')
     list = []
@@ -33,6 +37,7 @@ def get_gpu_list() -> List[gpu.GPU]:
 
 
 def replace_in_file(src: str, dst: str, correlations: Dict[str, str]) -> None:
+    """Copy file and replace given correlations"""
     f = open(src, 'r')
     file_data = f.read()
     f.close()
@@ -50,23 +55,27 @@ def replace_in_file(src: str, dst: str, correlations: Dict[str, str]) -> None:
 
 
 def create_symlink(source: str, dest: str) -> None:
+    """Create symlink (Delete exiting file if exists)"""
     if os.path.exists(dest):
         os.remove(dest)
     os.symlink(source, dest)
 
 
 def file_contains(file: str, text: str) -> bool:
+    """Return true if file contains given string"""
     with open(file, 'r') as f:
         data = f.read()
         return text in data
 
 
 def write_line_in_file(file: str, line: str) -> None:
+    """Append given line in a given file"""
     with open(file, 'a') as f:
         f.write(line)
 
 
 def remove_line_in_file(file: str, line: str) -> None:
+    """Search line in file and remove it if found"""
     f = open(file, 'r')
     lines = f.readlines()
     f.close()
@@ -79,6 +88,7 @@ def remove_line_in_file(file: str, line: str) -> None:
 
 
 def remove(file: str) -> None:
+    """Delete file ignoring FileNotFoundError"""
     try:
         os.remove(file)
     except FileNotFoundError:
