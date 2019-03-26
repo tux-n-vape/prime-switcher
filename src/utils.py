@@ -32,7 +32,14 @@ def get_gpu_list() -> List[gpu.GPU]:
             if de:
                 has_screen = re.search(r'(vga|display|hdmi)', device)
                 pci_id = de.group(1).replace('.', ':')
-                list.append(gpu.GPU(pci_id, bool(has_screen), de.group(2)))
+
+                brand = de.group(2)
+
+                # Fix (Alternative name for AMD Cards)
+                if brand == 'advanced':
+                    brand = 'amd'
+
+                list.append(gpu.GPU(pci_id, bool(has_screen), brand))
     return list
 
 
