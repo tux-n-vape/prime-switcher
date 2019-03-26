@@ -91,7 +91,7 @@ class OpenSourceDriverSwitcher(Switcher):
         super().__init__('open')
 
     def get_icon(self) -> str:
-        provider_id = os.getenv('DRI_PRIME', 0)
+        provider_id = int(os.getenv('DRI_PRIME', 0))
         gpu_brand = utils.get_gpu_list()[provider_id].get_brand()
         if gpu_brand == 'amd':
             return 'amd_on.png' if provider_id else 'amd_off.png'
@@ -128,7 +128,7 @@ class OpenSourceDriverSwitcher(Switcher):
             utils.remove_line_in_file(sddm_file, display_manager_hook)
 
     def get_dedicated_gpu_state(self) -> bool:
-        return os.getenv('DRI_PRIME', 0) == 1
+        return int(os.getenv('DRI_PRIME', 0)) == 1
 
     def uninstall(self) -> None:
         super().uninstall()
