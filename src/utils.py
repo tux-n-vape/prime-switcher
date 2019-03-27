@@ -25,7 +25,7 @@ def get_gpu_list() -> List[gpu.GPU]:
     """Get list of GPU detected by the system (lspci)"""
     data = execute_command('lspci').lower()
     reg = re.compile(r'(vga|display|hdmi|3d)')
-    list = []
+    gpu_list = []
     for device in data.split('\n'):
         if reg.search(device):
             de = re.search(r'([^ ]*).*:\s*([^ ]*)', device)
@@ -39,8 +39,8 @@ def get_gpu_list() -> List[gpu.GPU]:
                 if brand == 'advanced':
                     brand = 'amd'
 
-                list.append(gpu.GPU(pci_id, bool(has_screen), brand))
-    return list
+                gpu_list.append(gpu.GPU(pci_id, bool(has_screen), brand))
+    return gpu_list
 
 
 def replace_in_file(src: str, dst: str, correlations: Dict[str, str]) -> None:

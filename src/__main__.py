@@ -55,7 +55,7 @@ def main():
     if args.gui:
         gui.open_gui(swr)
     elif args.query:
-        gpu = 'Performance' if swr.get_dedicated_gpu_state() else 'Power Saving'
+        gpu = 'Performance' if swr.get_discrete_gpu_state() else 'Power Saving'
         print('Targeted Driver :', config_driver)
         print('Current Mode :', gpu)
         print('GPU :', swr.get_current_gpu_name())
@@ -73,7 +73,7 @@ def main():
             with open(current_driver_file, 'w') as f:
                 f.write(args.driver)
         print('Configuring...')
-        run_as_root(swr.set_dedicated_gpu_state, args.set == 'performance')
+        run_as_root(swr.set_discrete_gpu_state, args.set == 'performance')
         print('Done. Reboot required to apply changes.')
     elif args.detect:
         detect_driver()
