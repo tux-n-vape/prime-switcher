@@ -9,10 +9,12 @@ mkdir -p /usr/share/prime-switcher/
 cp -r configs/* /etc/prime-switcher/
 cp assets/* /usr/share/prime-switcher/
 cp src/* /usr/lib/prime-switcher/
-cp icons/* /usr/share/icons/hicolor/
+cp -r icons/* /usr/share/icons/hicolor/
 cp prime-switcher.desktop /etc/xdg/autostart/
 
 ln -s /usr/lib/prime-switcher/__main__.py /usr/bin/prime-switcher
 
 cd locales
 find . -name '*.mo' -exec cp --parents \{\} /usr/share/locale/ \;
+
+prime-switcher -D -s power-saving;

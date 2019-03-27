@@ -11,7 +11,6 @@ profile_file = '/etc/profile.d/prime-switcher.sh'
 gdm_file = '/etc/gdm/PreSession/prime-switcher'
 lightdm_file = '/etc/lightdm/lightdm.conf'
 sddm_file = '/usr/share/sddm/scripts/Xsetup'
-display_manager_hook = utils.get_config_filepath('open/display_manager_hook.sh')
 modes = ['power-saving', 'performance']
 
 
@@ -54,6 +53,37 @@ class Switcher(ABC):
         utils.remove(module_file)
         utils.remove(modprobe_file)
 
+    def get_display_manager_hook_file_path(self) -> str:
+        return utils.get_config_filepath(self.__dirname__ + '/display_manager_hook.sh')
+
+    def apply_display_manager_hooks(self) -> None:
+        if os.path.exists(self.get_display_manager_hook_file_path()):
+            # GDM
+            if os.path.exists('/etc/gdm/PreSession/'):
+                utils.create_symlink(self.get_display_manager_hook_file_path(), gdm_file)
+            # LightDM
+            if os.path.exists(lightdm_file):
+                utils.replace_in_file(lightdm_file, lightdm_file,
+                                      {'#display-setup-script=': (
+                                              'display-setup-script=' + self.get_display_manager_hook_file_path())})
+            # SDDM
+            if os.path.exists(sddm_file) and not utils.file_contains(sddm_file,
+                                                                     self.get_display_manager_hook_file_path()):
+                utils.write_line_in_file(sddm_file, sddm_file)
+
+    def remove_display_manager_hooks(self) -> None:
+        if os.path.exists(self.get_display_manager_hook_file_path()):
+            # GDM
+            utils.remove(gdm_file)
+            # LightDM
+            if os.path.exists(lightdm_file):
+                utils.replace_in_file(lightdm_file, lightdm_file,
+                                      {(
+                                               'display-setup-script=' + self.get_display_manager_hook_file_path()): '#display-setup-script='})
+            # SDDM
+            if os.path.exists(sddm_file):
+                utils.remove_line_in_file(sddm_file, self.get_display_manager_hook_file_path())
+
 
 class NvidiaSwitcher(Switcher):
     def __init__(self) -> None:
@@ -73,8 +103,10 @@ class NvidiaSwitcher(Switcher):
 
         if state:
             utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
+            self.apply_display_manager_hooks()
         else:
             utils.remove(profile_file)
+            self.remove_display_manager_hooks()
 
     def get_dedicated_gpu_state(self) -> bool:
         lsmod = utils.execute_command('lsmod')
@@ -103,31 +135,10 @@ class OpenSourceDriverSwitcher(Switcher):
         super().set_dedicated_gpu_state(state)
         if state:
             utils.create_symlink(self.get_config_file('profile.sh'), profile_file)
-
-            # GDM
-            if os.path.exists('/etc/gdm/PreSession/'):
-                utils.create_symlink(display_manager_hook, gdm_file)
-            # LightDM
-            if os.path.exists(lightdm_file):
-                utils.replace_in_file(lightdm_file, lightdm_file,
-                                      {'#display-setup-script=': ('display-setup-script=' + display_manager_hook)})
-            # SDDM
-            if os.path.exists(sddm_file) and not utils.file_contains(sddm_file, display_manager_hook):
-                utils.write_line_in_file(sddm_file, sddm_file)
+            self.apply_display_manager_hooks()
         else:
             utils.remove(profile_file)
             self.remove_display_manager_hooks()
-
-    def remove_display_manager_hooks(self) -> None:
-        # GDM
-        utils.remove(gdm_file)
-        # LightDM
-        if os.path.exists(lightdm_file):
-            utils.replace_in_file(lightdm_file, lightdm_file,
-                                  {('display-setup-script=' + display_manager_hook): '#display-setup-script='})
-        # SDDM
-        if os.path.exists(sddm_file):
-            utils.remove_line_in_file(sddm_file, display_manager_hook)
 
     def get_dedicated_gpu_state(self) -> bool:
         return int(os.getenv('DRI_PRIME', 0)) == 1
