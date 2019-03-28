@@ -11,6 +11,16 @@ Tool (GUI  + CLI) to select used GPU for Optimus Laptop on GNU/Linux.
 | Intel or AMD         | AMD                | amdgpu-pro (Proprietary)| No        |
 | Intel or AMD         | AMD                | amdgpu, radeon          | Yes       |
 
+## Display Managers Support
+
+| Display Manager | Supported |
+|-----------------|-----------|
+| GDM             | Yes       |
+| LightDM         | Yes       |
+| SDDM            | Yes       |
+| LXDM            | No        |
+| XDM             | No        |
+
 ## Dependencies
 
 - Python 3.7
