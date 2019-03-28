@@ -6,9 +6,9 @@ Tool (GUI  + CLI) to select used GPU for Optimus Laptop on GNU/Linux.
 
 | Integrated GPU brand | Discrete GPU brand | Driver for discrete GPU | Supported |
 |----------------------|--------------------|-------------------------|-----------|
-| Intel                | NVIDIA             | nvidia (Propritary)     | Yes       |
+| Intel                | NVIDIA             | nvidia (Proprietary)    | Yes       |
 | Intel                | NVIDIA             | nouveau                 | Yes       |
-| Intel or AMD         | AMD                | amdgpu-pro (Propritary) | No        |
+| Intel or AMD         | AMD                | amdgpu-pro (Proprietary)| No        |
 | Intel or AMD         | AMD                | amdgpu, radeon          | Yes       |
 
 ## Dependencies
