@@ -104,7 +104,7 @@ class Switcher(ABC):
             # SDDM
             if os.path.exists(sddm_file) and not utils.file_contains(sddm_file,
                                                                      self.get_display_manager_hook_file_path()):
-                utils.write_line_in_file(sddm_file, sddm_file)
+                utils.write_line_in_file(sddm_file, self.get_display_manager_hook_file_path())
 
     def remove_display_manager_hooks(self) -> None:
         """
