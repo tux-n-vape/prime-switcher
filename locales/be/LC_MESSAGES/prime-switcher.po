@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr "Project-Id-Version: \n"
+"POT-Creation-Date: 2019-03-18 14:27+0100\n"
+"PO-Revision-Date: 2019-07-21 14:37+0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.2.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Language: be_BY\n"
+
+#: gui.py:33
+msgid "Performance"
+msgstr "Прадукцыйны"
+
+#: gui.py:33
+msgid "Power Saving"
+msgstr "Энергазбергальны"
+
+#: gui.py:40
+msgid "Reboot is required to apply modifications"
+msgstr "Каб ужыліся змены патрэбна перазапусціць сістэму"
+
+#: gui.py:40
+msgid "Reboot required"
+msgstr "Патрабуецца перазапуск"
+
+#: gui.py:41
+msgid "Reboot now"
+msgstr "Перазапусціць зараз"
+
+#: gui.py:43
+msgid "An error as occurred."
+msgstr "Адбылася памылка"
+
+#: gui.py:43
+msgid "Error"
+msgstr "Памылка"
+
+#: gui.py:50
+msgid "Switch to {} mode"
+msgstr "Пераключыцца ў {} рэжым"
+
+#: gui.py:57
+msgid "Current Mode : {}"
+msgstr "Бягучы рэжым: {}"
