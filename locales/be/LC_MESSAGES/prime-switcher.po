@@ -37,7 +37,7 @@ msgid "Reboot now"
 msgstr "Перазапусціць зараз"
 
 #: gui.py:43
-msgid "An error as occurred."
+msgid "An error has occurred."
 msgstr "Адбылася памылка"
 
 #: gui.py:43
